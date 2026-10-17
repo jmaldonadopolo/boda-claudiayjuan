@@ -189,7 +189,14 @@ const memories = [
 			const AudioContextConstructor = window.AudioContext ?? (window as WindowWithWebkitAudio).webkitAudioContext;
 			if (!AudioContextConstructor) return;
 			celebrationAudio ??= new AudioContextConstructor();
-			if (celebrationAudio.state === 'suspended') void celebrationAudio.resume().catch(() => undefined);
+			// Crear y arrancar una fuente silenciosa dentro del clic desbloquea Web Audio
+			// en navegadores que exigen un gesto explícito antes de reproducir sonido.
+			const silentBuffer = celebrationAudio.createBuffer(1, 1, celebrationAudio.sampleRate);
+			const silentSource = celebrationAudio.createBufferSource();
+			silentSource.buffer = silentBuffer;
+			silentSource.connect(celebrationAudio.destination);
+			silentSource.start();
+			if (celebrationAudio.state !== 'running') void celebrationAudio.resume().catch(() => undefined);
 		} catch { /* El confeti visual sigue disponible si el navegador no ofrece Web Audio. */ }
 	};
 	const playCelebrationSound = () => {
@@ -199,20 +206,20 @@ const memories = [
 			try {
 				const now = context.currentTime;
 				const master = context.createGain();
-				master.gain.setValueAtTime(.3, now);
+				master.gain.setValueAtTime(.55, now);
 				master.connect(context.destination);
 
 				const pop = context.createOscillator();
-			const popVolume = context.createGain();
-			pop.type = 'triangle';
-			pop.frequency.setValueAtTime(165, now);
-			pop.frequency.exponentialRampToValueAtTime(58, now + .16);
-			popVolume.gain.setValueAtTime(.0001, now);
-			popVolume.gain.linearRampToValueAtTime(.2, now + .008);
-			popVolume.gain.exponentialRampToValueAtTime(.0001, now + .19);
-			pop.connect(popVolume).connect(master);
-			pop.start(now);
-			pop.stop(now + .2);
+				const popVolume = context.createGain();
+				pop.type = 'triangle';
+				pop.frequency.setValueAtTime(165, now);
+				pop.frequency.exponentialRampToValueAtTime(58, now + .16);
+				popVolume.gain.setValueAtTime(.0001, now);
+				popVolume.gain.linearRampToValueAtTime(.42, now + .008);
+				popVolume.gain.exponentialRampToValueAtTime(.0001, now + .19);
+				pop.connect(popVolume).connect(master);
+				pop.start(now);
+				pop.stop(now + .2);
 
 				const noiseBuffer = context.createBuffer(1, Math.floor(context.sampleRate * .38), context.sampleRate);
 				const noiseSamples = noiseBuffer.getChannelData(0);
@@ -226,7 +233,7 @@ const memories = [
 				rustleFilter.type = 'lowpass';
 				rustleFilter.frequency.setValueAtTime(1900, now);
 				rustleVolume.gain.setValueAtTime(.0001, now);
-				rustleVolume.gain.linearRampToValueAtTime(.2, now + .01);
+				rustleVolume.gain.linearRampToValueAtTime(.38, now + .01);
 				rustleVolume.gain.exponentialRampToValueAtTime(.0001, now + .25);
 				rustle.connect(rustleFilter).connect(rustleVolume).connect(master);
 				rustle.start(now);
@@ -241,7 +248,7 @@ const memories = [
 					snapFilter.type = 'highpass';
 					snapFilter.frequency.setValueAtTime(2800 + Math.random() * 1400, start);
 					snapVolume.gain.setValueAtTime(.0001, start);
-					snapVolume.gain.linearRampToValueAtTime(.22, start + .002);
+					snapVolume.gain.linearRampToValueAtTime(.38, start + .002);
 					snapVolume.gain.exponentialRampToValueAtTime(.0001, start + .026);
 					snap.connect(snapFilter).connect(snapVolume).connect(master);
 					snap.start(start);
