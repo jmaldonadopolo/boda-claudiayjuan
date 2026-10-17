@@ -173,6 +173,7 @@ const memories = [
 
 <script>
 	import gsap from 'gsap';
+	import confetti from 'canvas-confetti';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import Lenis from 'lenis';
 
@@ -181,12 +182,84 @@ const memories = [
 	const curtain = document.querySelector<HTMLElement>('[data-curtain]');
 	const openButton = document.querySelector<HTMLButtonElement>('[data-open-invitation]');
 	const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	let celebrationAudio: AudioContext | null = null;
+	type WindowWithWebkitAudio = Window & { webkitAudioContext?: typeof AudioContext };
+	const prepareCelebrationAudio = () => {
+		try {
+			const AudioContextConstructor = window.AudioContext ?? (window as WindowWithWebkitAudio).webkitAudioContext;
+			if (!AudioContextConstructor) return;
+			celebrationAudio ??= new AudioContextConstructor();
+			if (celebrationAudio.state === 'suspended') void celebrationAudio.resume().catch(() => undefined);
+		} catch { /* El confeti visual sigue disponible si el navegador no ofrece Web Audio. */ }
+	};
+	const playCelebrationSound = () => {
+		const context = celebrationAudio;
+		if (!context) return;
+		const play = () => {
+			try {
+				const now = context.currentTime;
+				const master = context.createGain();
+				master.gain.setValueAtTime(.3, now);
+				master.connect(context.destination);
+
+				const pop = context.createOscillator();
+			const popVolume = context.createGain();
+			pop.type = 'triangle';
+			pop.frequency.setValueAtTime(165, now);
+			pop.frequency.exponentialRampToValueAtTime(58, now + .16);
+			popVolume.gain.setValueAtTime(.0001, now);
+			popVolume.gain.linearRampToValueAtTime(.2, now + .008);
+			popVolume.gain.exponentialRampToValueAtTime(.0001, now + .19);
+			pop.connect(popVolume).connect(master);
+			pop.start(now);
+			pop.stop(now + .2);
+
+				const noiseBuffer = context.createBuffer(1, Math.floor(context.sampleRate * .38), context.sampleRate);
+				const noiseSamples = noiseBuffer.getChannelData(0);
+				for (let index = 0; index < noiseSamples.length; index += 1) {
+					noiseSamples[index] = (Math.random() * 2 - 1) * (1 - index / noiseSamples.length) ** 1.8;
+				}
+				const rustle = context.createBufferSource();
+				const rustleFilter = context.createBiquadFilter();
+				const rustleVolume = context.createGain();
+				rustle.buffer = noiseBuffer;
+				rustleFilter.type = 'lowpass';
+				rustleFilter.frequency.setValueAtTime(1900, now);
+				rustleVolume.gain.setValueAtTime(.0001, now);
+				rustleVolume.gain.linearRampToValueAtTime(.2, now + .01);
+				rustleVolume.gain.exponentialRampToValueAtTime(.0001, now + .25);
+				rustle.connect(rustleFilter).connect(rustleVolume).connect(master);
+				rustle.start(now);
+				rustle.stop(now + .26);
+
+				for (let index = 0; index < 7; index += 1) {
+					const start = now + .11 + index * .038;
+					const snap = context.createBufferSource();
+					const snapFilter = context.createBiquadFilter();
+					const snapVolume = context.createGain();
+					snap.buffer = noiseBuffer;
+					snapFilter.type = 'highpass';
+					snapFilter.frequency.setValueAtTime(2800 + Math.random() * 1400, start);
+					snapVolume.gain.setValueAtTime(.0001, start);
+					snapVolume.gain.linearRampToValueAtTime(.22, start + .002);
+					snapVolume.gain.exponentialRampToValueAtTime(.0001, start + .026);
+					snap.connect(snapFilter).connect(snapVolume).connect(master);
+					snap.start(start);
+					snap.stop(start + .03);
+				}
+				window.setTimeout(() => master.disconnect(), 900);
+			} catch { /* Algunos dispositivos pueden suspender el audio al cambiar de pestaña. */ }
+		};
+		if (context.state === 'running') play();
+		else void context.resume().then(play).catch(() => undefined);
+	};
 	type GalleryMemory = { image: string; thumb: string; width: number; height: number; alt: string; year: string; note: string };
 	const galleryMemories = JSON.parse(document.querySelector<HTMLScriptElement>('[data-gallery-data]')?.textContent ?? '[]') as GalleryMemory[];
 
 	if (curtain && openButton) {
 		document.body.classList.add('is-locked');
 		openButton.addEventListener('click', () => {
+			prepareCelebrationAudio();
 			curtain.classList.add('is-opening');
 			document.body.classList.remove('is-locked');
 			document.body.classList.add('is-open');
@@ -265,6 +338,37 @@ const memories = [
 			});
 		});
 	}
+
+	let finalePlayed = false;
+	let finaleCheckScheduled = false;
+	const celebrateAtPageEnd = () => {
+		if (finalePlayed || !document.body.classList.contains('is-open')) return;
+		const documentHeight = document.documentElement.scrollHeight;
+		const maximumScroll = documentHeight - window.innerHeight;
+		const currentScroll = window.scrollY || document.documentElement.scrollTop;
+		if (maximumScroll <= 0 || maximumScroll - currentScroll > 3) return;
+
+		finalePlayed = true;
+		playCelebrationSound();
+		if (reducedMotion) return;
+
+		const themeColors = ['#662536', '#4a1728', '#b8875b', '#d8b58b', '#f3ecdf'];
+		confetti({ particleCount: 108, spread: 78, startVelocity: 43, gravity: .82, decay: .9, ticks: 220, scalar: .92, origin: { x: .5, y: .88 }, colors: themeColors, shapes: ['square', 'circle'], zIndex: 120 });
+		window.setTimeout(() => {
+			confetti({ particleCount: 34, angle: 62, spread: 58, startVelocity: 38, gravity: .86, decay: .9, ticks: 210, scalar: .82, origin: { x: 0, y: .9 }, colors: themeColors, zIndex: 120 });
+			confetti({ particleCount: 34, angle: 118, spread: 58, startVelocity: 38, gravity: .86, decay: .9, ticks: 210, scalar: .82, origin: { x: 1, y: .9 }, colors: themeColors, zIndex: 120 });
+		}, 140);
+	};
+	const scheduleFinaleCheck = () => {
+		if (finaleCheckScheduled) return;
+		finaleCheckScheduled = true;
+		window.requestAnimationFrame(() => {
+			finaleCheckScheduled = false;
+			celebrateAtPageEnd();
+		});
+	};
+	window.addEventListener('scroll', scheduleFinaleCheck, { passive: true });
+	window.addEventListener('resize', scheduleFinaleCheck, { passive: true });
 
 	const gallery = document.querySelector<HTMLDialogElement>('[data-gallery-dialog]');
 	const galleryImage = gallery?.querySelector<HTMLImageElement>('[data-gallery-image]');
