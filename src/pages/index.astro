@@ -205,56 +205,75 @@ const memories = [
 		const play = () => {
 			try {
 				const now = context.currentTime;
+				const tailDuration = .72;
 				const master = context.createGain();
-				master.gain.setValueAtTime(.55, now);
+				master.gain.setValueAtTime(.38, now);
 				master.connect(context.destination);
 
-				const pop = context.createOscillator();
-				const popVolume = context.createGain();
-				pop.type = 'triangle';
-				pop.frequency.setValueAtTime(165, now);
-				pop.frequency.exponentialRampToValueAtTime(58, now + .16);
-				popVolume.gain.setValueAtTime(.0001, now);
-				popVolume.gain.linearRampToValueAtTime(.42, now + .008);
-				popVolume.gain.exponentialRampToValueAtTime(.0001, now + .19);
-				pop.connect(popVolume).connect(master);
-				pop.start(now);
-				pop.stop(now + .2);
-
-				const noiseBuffer = context.createBuffer(1, Math.floor(context.sampleRate * .38), context.sampleRate);
+				const noiseBuffer = context.createBuffer(1, Math.ceil(context.sampleRate * tailDuration), context.sampleRate);
 				const noiseSamples = noiseBuffer.getChannelData(0);
-				for (let index = 0; index < noiseSamples.length; index += 1) {
-					noiseSamples[index] = (Math.random() * 2 - 1) * (1 - index / noiseSamples.length) ** 1.8;
-				}
-				const rustle = context.createBufferSource();
-				const rustleFilter = context.createBiquadFilter();
-				const rustleVolume = context.createGain();
-				rustle.buffer = noiseBuffer;
-				rustleFilter.type = 'lowpass';
-				rustleFilter.frequency.setValueAtTime(1900, now);
-				rustleVolume.gain.setValueAtTime(.0001, now);
-				rustleVolume.gain.linearRampToValueAtTime(.38, now + .01);
-				rustleVolume.gain.exponentialRampToValueAtTime(.0001, now + .25);
-				rustle.connect(rustleFilter).connect(rustleVolume).connect(master);
-				rustle.start(now);
-				rustle.stop(now + .26);
+				for (let index = 0; index < noiseSamples.length; index += 1) noiseSamples[index] = Math.random() * 2 - 1;
 
-				for (let index = 0; index < 7; index += 1) {
-					const start = now + .11 + index * .038;
+				// Golpe grave breve y un chasquido agudo dan el carácter de petardo de fiesta.
+				const thump = context.createOscillator();
+				const thumpFilter = context.createBiquadFilter();
+				const thumpVolume = context.createGain();
+				thump.type = 'sine';
+				thump.frequency.setValueAtTime(125, now);
+				thump.frequency.exponentialRampToValueAtTime(48, now + .16);
+				thumpFilter.type = 'lowpass';
+				thumpFilter.frequency.setValueAtTime(320, now);
+				thumpVolume.gain.setValueAtTime(.0001, now);
+				thumpVolume.gain.linearRampToValueAtTime(.85, now + .004);
+				thumpVolume.gain.exponentialRampToValueAtTime(.0001, now + .19);
+				thump.connect(thumpFilter).connect(thumpVolume).connect(master);
+				thump.start(now);
+				thump.stop(now + .2);
+
+				const crack = context.createBufferSource();
+				const crackFilter = context.createBiquadFilter();
+				const crackVolume = context.createGain();
+				crack.buffer = noiseBuffer;
+				crackFilter.type = 'highpass';
+				crackFilter.frequency.setValueAtTime(700, now);
+				crackVolume.gain.setValueAtTime(.0001, now);
+				crackVolume.gain.linearRampToValueAtTime(.9, now + .002);
+				crackVolume.gain.exponentialRampToValueAtTime(.0001, now + .075);
+				crack.connect(crackFilter).connect(crackVolume).connect(master);
+				crack.start(now);
+				crack.stop(now + .08);
+
+				// Chisporroteo irregular, como el papel metalizado de un cañón de fiesta.
+				const fizz = context.createBufferSource();
+				const fizzFilter = context.createBiquadFilter();
+				const fizzVolume = context.createGain();
+				fizz.buffer = noiseBuffer;
+				fizzFilter.type = 'lowpass';
+				fizzFilter.frequency.setValueAtTime(5200, now);
+				fizzVolume.gain.setValueAtTime(.32, now + .018);
+				fizzVolume.gain.exponentialRampToValueAtTime(.0001, now + tailDuration);
+				fizz.connect(fizzFilter).connect(fizzVolume).connect(master);
+				fizz.start(now + .018);
+				fizz.stop(now + tailDuration);
+
+				for (let index = 0; index < 13; index += 1) {
+					const start = now + .055 + Math.random() * .5;
+					const duration = .018 + Math.random() * .035;
 					const snap = context.createBufferSource();
 					const snapFilter = context.createBiquadFilter();
 					const snapVolume = context.createGain();
 					snap.buffer = noiseBuffer;
-					snapFilter.type = 'highpass';
-					snapFilter.frequency.setValueAtTime(2800 + Math.random() * 1400, start);
+					snapFilter.type = 'bandpass';
+					snapFilter.frequency.setValueAtTime(1300 + Math.random() * 3600, start);
+					snapFilter.Q.setValueAtTime(.7 + Math.random() * 1.4, start);
 					snapVolume.gain.setValueAtTime(.0001, start);
-					snapVolume.gain.linearRampToValueAtTime(.38, start + .002);
-					snapVolume.gain.exponentialRampToValueAtTime(.0001, start + .026);
+					snapVolume.gain.linearRampToValueAtTime(.65, start + .0015);
+					snapVolume.gain.exponentialRampToValueAtTime(.0001, start + duration);
 					snap.connect(snapFilter).connect(snapVolume).connect(master);
 					snap.start(start);
-					snap.stop(start + .03);
+					snap.stop(start + duration);
 				}
-				window.setTimeout(() => master.disconnect(), 900);
+				window.setTimeout(() => master.disconnect(), 1100);
 			} catch { /* Algunos dispositivos pueden suspender el audio al cambiar de pestaña. */ }
 		};
 		if (context.state === 'running') play();
