@@ -124,7 +124,6 @@ const memories = [
 					<label for="guest-message">Tu dedicatoria</label>
 					<textarea id="guest-message" name="message" rows="4" maxlength="240" placeholder="Escribe un deseo para ellos…" required></textarea>
 					<div class="form-footer"><span data-character-count>0 / 240</span><button type="submit">Dejar mi mensaje <span aria-hidden="true">↗</span></button></div>
-					<p class="form-note">Las dedicatorias se guardan en este dispositivo. Para recibirlas en un libro compartido, conecta un servicio de almacenamiento.</p>
 					<p class="form-confirmation" role="status" aria-live="polite" data-form-status></p>
 				</form>
 			</div>
@@ -427,7 +426,7 @@ const memories = [
 		localStorage.setItem(storageKey, JSON.stringify([...getDedications(), dedication]));
 		form.reset();
 		if (charCount) charCount.textContent = '0 / 240';
-		if (status) status.textContent = 'Tu dedicatoria quedó guardada en este dispositivo. ¡Gracias por acompañarlos!';
+		if (status) status.textContent = '¡Gracias por dejar tus buenos deseos para este día!';
 		renderDedications();
 	});
 	renderDedications();
