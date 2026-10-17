@@ -3,8 +3,8 @@
 
 /images/*.webp
   Cache-Control: public, max-age=31536000, immutable
-/favicon.svg
+/favicon-copas.svg
   Cache-Control: public, max-age=31536000, immutable
 
-/favicon-512.png
+/favicon-copas-512.png
   Cache-Control: public, max-age=31536000, immutable
