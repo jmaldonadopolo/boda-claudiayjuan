@@ -143,7 +143,7 @@ const memories = [
 		<div class="curtain-center">
 			<div class="curtain-monogram" id="invite-title">Claudia <span class="couple-ampersand">&amp;</span> Juan</div>
 			<p>Una celebración de amor</p>
-			<button type="button" data-open-invitation autofocus>ABRIR INVITACIÓN <span aria-hidden="true">↓</span></button>
+			<button type="button" data-open-invitation autofocus>CONOCE NUESTRA HISTORIA <span aria-hidden="true">↓</span></button>
 			<small>31 DE OCTUBRE · 2026</small>
 		</div>
 		<div class="balloon balloon-one" aria-hidden="true"><i></i></div><div class="balloon balloon-two" aria-hidden="true"><i></i></div><div class="balloon balloon-three" aria-hidden="true"><i></i></div>
@@ -153,6 +153,8 @@ const memories = [
 		<div class="curtain-floral curtain-floral-right" aria-hidden="true"><img src="/images/curtain-florals.df41fe4ec3.webp" width="1312" height="1199" alt="" /></div>
 		<div class="curtain-footer"><span>UNA HISTORIA DE FAMILIA</span><span>DESLIZA, RECUERDA, CELEBRA</span></div>
 	</div>
+	<div class="page-floral page-floral-left" aria-hidden="true"><img src="/images/curtain-florals.df41fe4ec3.webp" width="1312" height="1199" alt="" /></div>
+	<div class="page-floral page-floral-right" aria-hidden="true"><img src="/images/curtain-florals.df41fe4ec3.webp" width="1312" height="1199" alt="" /></div>
 
 	<script type="application/json" data-gallery-data set:html={JSON.stringify(albumMemories)}></script>
 	<dialog class="gallery-dialog" id="wedding-gallery" data-gallery-dialog aria-label="Galería de recuerdos de Claudia y Juan">
@@ -187,6 +189,7 @@ const memories = [
 		openButton.addEventListener('click', () => {
 			curtain.classList.add('is-opening');
 			document.body.classList.remove('is-locked');
+			document.body.classList.add('is-open');
 			const previousScrollBehavior = document.documentElement.style.scrollBehavior;
 			document.documentElement.style.scrollBehavior = 'auto';
 			window.scrollTo(0, 0);
@@ -514,6 +517,9 @@ const memories = [
 	.curtain-floral-left{left:-.8vw}
 	.curtain-floral-right{right:-.8vw;transform:scaleX(-1)}
 	@media(max-width:600px){.curtain-floral{width:clamp(145px,43vw,220px);bottom:-.65rem;opacity:.88}.curtain-floral-left{left:-1rem}.curtain-floral-right{right:-1rem}}
+	.page-floral{display:none}
+	@media(max-width:600px){.page-floral{display:block;position:fixed;z-index:5;bottom:max(.45rem,env(safe-area-inset-bottom));width:clamp(46px,14vw,72px);aspect-ratio:1312/1199;pointer-events:none;opacity:0;visibility:hidden;filter:drop-shadow(0 2px 5px #32132218);transition:opacity .9s ease,visibility 0s linear .9s}.page-floral img{display:block;width:100%;height:100%;object-fit:contain}.page-floral-left{left:-.35rem}.page-floral-right{right:-.35rem;transform:scaleX(-1)}:global(body.is-open) .page-floral{opacity:.28;visibility:visible;transition-delay:.85s,0s}}
+	@media(prefers-reduced-motion:reduce){.page-floral{transition:none}}
 	.curtain-footer{top:clamp(7rem,14vh,8.5rem);bottom:auto;z-index:4;font-size:.62rem;letter-spacing:.13em}
 	.curtain-center button{font-size:.72rem;letter-spacing:.16em}
 	.curtain-center small{font-size:.65rem;letter-spacing:.18em}
