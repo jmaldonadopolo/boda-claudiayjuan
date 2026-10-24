@@ -1054,5 +1054,27 @@
     "height": 1200,
     "thumbWidth": 407,
     "thumbHeight": 720
+  },
+  {
+    "image": "/photos/gallery/boda-civil-auto.webp",
+    "alt": "Claudia baja de un auto mientras Juan la acompaña, el día de su boda civil",
+    "year": "BODA CIVIL",
+    "note": "Un recuerdo de la boda civil de mamá y papá.",
+    "thumb": "/photos/gallery/boda-civil-auto-thumb.webp",
+    "width": 1055,
+    "height": 1491,
+    "thumbWidth": 540,
+    "thumbHeight": 763
+  },
+  {
+    "image": "/photos/gallery/boda-civil-retrato.webp",
+    "alt": "Claudia y Juan, vestidos para su boda civil, posan juntos",
+    "year": "BODA CIVIL",
+    "note": "Otro capítulo de su historia, guardado en una fotografía.",
+    "thumb": "/photos/gallery/boda-civil-retrato-thumb.webp",
+    "width": 1055,
+    "height": 1491,
+    "thumbWidth": 540,
+    "thumbHeight": 763
   }
 ]
