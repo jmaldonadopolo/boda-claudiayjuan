@@ -44,6 +44,8 @@ export default function DedicationWall() {
 	const [activeIndex, setActiveIndex] = useState<number | null>(null);
 	const [isClosing, setIsClosing] = useState(false);
 	const dialogRef = useRef<HTMLDialogElement>(null);
+	const touchGestureRef = useRef<{ x: number; y: number; moved: boolean } | null>(null);
+	const ignoreTouchClickRef = useRef(false);
 
 	useEffect(() => {
 		if (import.meta.env.DEV) return;
@@ -139,7 +141,37 @@ export default function DedicationWall() {
 					{dedications.map((dedication, index) => (
 						<article class={`wish-card wish-card--color-${dedication.color} wish-card--font-${dedication.font} wish-card--offset-${index % 5}`} key={dedication.id}>
 							<span class="wish-note-tape" aria-hidden="true"></span>
-							<button class="wish-card-trigger" type="button" onClick={() => setActiveIndex(index)} aria-label={`Leer dedicatoria de ${dedication.name}`}>
+							<button
+								class="wish-card-trigger"
+								type="button"
+								aria-label={`Leer dedicatoria de ${dedication.name}`}
+								onPointerDown={(event) => {
+									if (event.pointerType === 'touch') {
+										touchGestureRef.current = { x: event.clientX, y: event.clientY, moved: false };
+										ignoreTouchClickRef.current = false;
+									}
+								}}
+								onPointerMove={(event) => {
+									const gesture = touchGestureRef.current;
+									if (gesture && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 12) {
+										gesture.moved = true;
+										ignoreTouchClickRef.current = true;
+									}
+								}}
+								onPointerUp={() => {
+									if (touchGestureRef.current?.moved) window.setTimeout(() => { ignoreTouchClickRef.current = false; }, 400);
+									touchGestureRef.current = null;
+								}}
+								onPointerCancel={() => { touchGestureRef.current = null; ignoreTouchClickRef.current = false; }}
+								onClick={(event) => {
+									if (ignoreTouchClickRef.current) {
+										event.preventDefault();
+										ignoreTouchClickRef.current = false;
+										return;
+									}
+									setActiveIndex(index);
+								}}
+							>
 								<p class="wish-message">“{dedication.message}”</p>
 								<span class="wish-author">{dedication.name}</span>
 							</button>
@@ -150,13 +182,13 @@ export default function DedicationWall() {
 			<dialog ref={dialogRef} class={`dedication-lightbox${isClosing ? ' is-closing' : ''}`} aria-label="Dedicatoria ampliada" onClick={(event) => { if (event.target === event.currentTarget) closeLightbox(); }} onCancel={(event) => { event.preventDefault(); closeLightbox(); }} onKeyDown={(event) => { if (event.key === 'ArrowRight') showNext(1); if (event.key === 'ArrowLeft') showNext(-1); }}>
 				{activeDedication && <div class={`lightbox-note wish-card--color-${activeDedication.color} wish-card--font-${activeDedication.font}`}>
 					<span class="wish-note-tape" aria-hidden="true"></span>
-					<button class="lightbox-close" type="button" onClick={closeLightbox} aria-label="Cerrar dedicatoria">×</button>
+					<button class="lightbox-close" type="button" onClick={closeLightbox} aria-label="Cerrar dedicatoria"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17" /></svg></button>
 					<p class="lightbox-message">“{activeDedication.message}”</p>
 					<span class="lightbox-author">{activeDedication.name}</span>
 					<div class="lightbox-pagination">
-						<button type="button" onClick={() => showNext(-1)} aria-label="Dedicatoria anterior">‹</button>
+						<button type="button" onClick={() => showNext(-1)} aria-label="Dedicatoria anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7" /></svg></button>
 						<span>{activeIndex + 1} / {dedications.length}</span>
-						<button type="button" onClick={() => showNext(1)} aria-label="Dedicatoria siguiente">›</button>
+						<button type="button" onClick={() => showNext(1)} aria-label="Dedicatoria siguiente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 5 7 7-7 7" /></svg></button>
 					</div>
 				</div>}
 			</dialog>

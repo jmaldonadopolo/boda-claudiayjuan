@@ -119,7 +119,7 @@ const memories = [
 		</section>
 	</main>
 	<button class="floating-envelope" type="button" data-floating-envelope aria-label="Arrastra o pulsa para ir a las dedicatorias">
-		<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="10" width="38" height="28" rx="5" fill="currentColor"/><path d="m7 14 17 13 17-13" fill="none" stroke="#fff5e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/><path d="M20 24h8" fill="none" stroke="#e8c397" stroke-linecap="round" stroke-width="2"/></svg>
+		<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="10" width="38" height="28" rx="5" fill="currentColor"/><path d="m7 14 17 13 17-13M8 35l12-10m20 10L28 25" fill="none" stroke="#fff5e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/><path d="M24 28.5s-6.8-4.8-6.8-8.7a3.8 3.8 0 0 1 6.8-2.3 3.8 3.8 0 0 1 6.8 2.3c0 3.9-6.8 8.7-6.8 8.7Z" fill="#741a36" stroke="#f6eee1" stroke-width=".8" stroke-linejoin="round"/></svg>
 		<span>Dedicatorias</span>
 	</button>
 
@@ -320,6 +320,20 @@ const memories = [
 	};
 	type GalleryMemory = { image: string; thumb: string; width: number; height: number; alt: string; year: string; note: string };
 	const galleryMemories = JSON.parse(document.querySelector<HTMLScriptElement>('[data-gallery-data]')?.textContent ?? '[]') as GalleryMemory[];
+	let celebrationBurstPlayed = false;
+	const celebrateAfterCurtainOpens = () => {
+		if (celebrationBurstPlayed) return;
+		celebrationBurstPlayed = true;
+		playCelebrationSound();
+		if (reducedMotion) return;
+
+		const themeColors = ['#662536', '#4a1728', '#b8875b', '#d8b58b', '#f3ecdf'];
+		confetti({ particleCount: 108, spread: 78, startVelocity: 43, gravity: .82, decay: .9, ticks: 220, scalar: .92, origin: { x: .5, y: .88 }, colors: themeColors, shapes: ['square', 'circle'], zIndex: 120 });
+		window.setTimeout(() => {
+			confetti({ particleCount: 34, angle: 62, spread: 58, startVelocity: 38, gravity: .86, decay: .9, ticks: 210, scalar: .82, origin: { x: 0, y: .9 }, colors: themeColors, zIndex: 120 });
+			confetti({ particleCount: 34, angle: 118, spread: 58, startVelocity: 38, gravity: .86, decay: .9, ticks: 210, scalar: .82, origin: { x: 1, y: .9 }, colors: themeColors, zIndex: 120 });
+		}, 140);
+	};
 
 	if (curtain && openButton) {
 		document.body.classList.add('is-locked');
@@ -333,6 +347,19 @@ const memories = [
 			window.scrollTo(0, 0);
 			if (window.location.hash) window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
 			window.setTimeout(() => { document.documentElement.style.scrollBehavior = previousScrollBehavior; }, 1800);
+			const curtainPanels = [...curtain.querySelectorAll<HTMLElement>('.curtain-panel')];
+			if (reducedMotion || curtainPanels.length < 2) {
+				window.setTimeout(celebrateAfterCurtainOpens, 40);
+			} else {
+				const openedPanels = new Set<HTMLElement>();
+				const onPanelOpened = (event: TransitionEvent) => {
+					if (event.propertyName !== 'transform' || !curtainPanels.includes(event.currentTarget as HTMLElement)) return;
+					openedPanels.add(event.currentTarget as HTMLElement);
+					if (openedPanels.size === curtainPanels.length) celebrateAfterCurtainOpens();
+				};
+				curtainPanels.forEach((panel) => panel.addEventListener('transitionend', onPanelOpened));
+				window.setTimeout(celebrateAfterCurtainOpens, 1500);
+			}
 			if (!reducedMotion) {
 				const entrance = gsap.timeline();
 				entrance.fromTo('.hero-copy > *:not(.hero-countdown-wrap)', { autoAlpha: 0, y: 18 }, {
@@ -403,37 +430,6 @@ const memories = [
 			});
 		});
 	}
-
-	let finalePlayed = false;
-	let finaleCheckScheduled = false;
-	const celebrateAtPageEnd = () => {
-		if (finalePlayed || !document.body.classList.contains('is-open')) return;
-		const documentHeight = document.documentElement.scrollHeight;
-		const maximumScroll = documentHeight - window.innerHeight;
-		const currentScroll = window.scrollY || document.documentElement.scrollTop;
-		if (maximumScroll <= 0 || maximumScroll - currentScroll > 3) return;
-
-		finalePlayed = true;
-		playCelebrationSound();
-		if (reducedMotion) return;
-
-		const themeColors = ['#662536', '#4a1728', '#b8875b', '#d8b58b', '#f3ecdf'];
-		confetti({ particleCount: 108, spread: 78, startVelocity: 43, gravity: .82, decay: .9, ticks: 220, scalar: .92, origin: { x: .5, y: .88 }, colors: themeColors, shapes: ['square', 'circle'], zIndex: 120 });
-		window.setTimeout(() => {
-			confetti({ particleCount: 34, angle: 62, spread: 58, startVelocity: 38, gravity: .86, decay: .9, ticks: 210, scalar: .82, origin: { x: 0, y: .9 }, colors: themeColors, zIndex: 120 });
-			confetti({ particleCount: 34, angle: 118, spread: 58, startVelocity: 38, gravity: .86, decay: .9, ticks: 210, scalar: .82, origin: { x: 1, y: .9 }, colors: themeColors, zIndex: 120 });
-		}, 140);
-	};
-	const scheduleFinaleCheck = () => {
-		if (finaleCheckScheduled) return;
-		finaleCheckScheduled = true;
-		window.requestAnimationFrame(() => {
-			finaleCheckScheduled = false;
-			celebrateAtPageEnd();
-		});
-	};
-	window.addEventListener('scroll', scheduleFinaleCheck, { passive: true });
-	window.addEventListener('resize', scheduleFinaleCheck, { passive: true });
 
 	const gallery = document.querySelector<HTMLDialogElement>('[data-gallery-dialog]');
 	const galleryImage = gallery?.querySelector<HTMLImageElement>('[data-gallery-image]');

@@ -6,8 +6,8 @@
 
 /images/*.webp
   Cache-Control: public, max-age=31536000, immutable
-/favicon-copas.svg
+/favicon-heart.svg
   Cache-Control: public, max-age=31536000, immutable
 
-/favicon-copas-512.png
+/favicon-heart-512.png
   Cache-Control: public, max-age=31536000, immutable
