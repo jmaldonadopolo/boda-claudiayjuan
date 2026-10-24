@@ -1,14 +1,27 @@
 # Claudia & Juan · Invitación de boda
 
-Landing interactiva para celebrar la boda de Claudia y Juan, el 31 de octubre de 2026. Incluye una invitación con apertura de cortinas, cuenta regresiva, historia familiar, álbum fotográfico y libro de dedicatorias local.
+Landing interactiva para recordar la historia de Claudia y Juan. Incluye apertura de cortinas, cuenta regresiva, álbum fotográfico y un muro público de dedicatorias.
 
 ## Desarrollo
 
 - `npm run dev`: inicia Astro en `http://localhost:4321`.
-- `npm run build`: genera el sitio estático en `dist/`.
+- `npm run build`: genera la portada estática en `dist/`.
 - `npm run preview`: sirve localmente la compilación.
+- `npm run db:migrate:local`: crea la tabla de dedicatorias en D1 local.
+- `npm run db:migrate:remote`: aplica las migraciones a D1 en Cloudflare.
 
-Las fotografías optimizadas y los recursos gráficos están en `public/`. Las dedicatorias se guardan en el dispositivo del visitante; para compartirlas entre personas se debe conectar un servicio de almacenamiento.
+Las fotografías optimizadas y los recursos gráficos están en `public/`. El formulario de dedicatorias es una isla Preact que se hidrata al acercarse al bloque. Envía y consulta mensajes en `/api/dedications`; una Cloudflare Pages Function escribe registros con consultas preparadas en D1. El muro muestra una nota de ejemplo además de los mensajes compartidos. No usa `localStorage` ni consulta en intervalos: carga una vez al aparecer la isla.
+
+Se usa Astro estático + Pages Functions porque el adaptador oficial `@astrojs/cloudflare` actual ya no admite Cloudflare Pages y recomienda Workers. Así solo el API ejecuta código en el borde y el resto continúa como archivos estáticos de Pages.
+
+### Conectar D1 con Cloudflare Pages
+
+1. Crear la base de datos: `npx wrangler d1 create boda-claudia-juan-dedications`.
+2. Copiar el UUID devuelto en `database_id` de `wrangler.jsonc` y mantener el binding con nombre `DB`.
+3. Aplicar el esquema remoto: `npm run db:migrate:remote`.
+4. En Pages, usar `npm run build` como comando de compilación y `dist` como directorio de salida; el archivo `wrangler.jsonc` define la vinculación D1.
+
+Para desarrollo de la interfaz, ejecutar `npm run dev`. Para probar las Pages Functions y D1 localmente, ejecutar `npm run db:migrate:local`, `npm run build` y `npx wrangler pages dev dist`. El plan gratuito de Cloudflare incluye límites diarios de Workers/Functions y D1; el diseño evita consultas periódicas y limita la carga a las 24 notas más recientes.
 
 ## Revisión responsive y scroll
 

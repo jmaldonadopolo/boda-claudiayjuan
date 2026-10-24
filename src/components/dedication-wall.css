@@ -1,0 +1,32 @@
+.dedication-island{display:contents}
+.dedication-form{grid-column:2;display:flex;flex-direction:column;gap:.7rem}
+.dedication-form label{font-size:.6rem;text-transform:uppercase;letter-spacing:.14em;color:#8b7665;margin-top:.4rem}
+.dedication-form input,.dedication-form textarea{border:0;border-bottom:1px solid #b6a28e;background:transparent;padding:.8rem 0;font:400 .95rem var(--sans);color:var(--ink);border-radius:0;outline:none;resize:vertical}
+.dedication-form input:focus,.dedication-form textarea:focus{border-color:var(--wine);box-shadow:0 1px var(--wine)}
+.dedication-form input::placeholder,.dedication-form textarea::placeholder{color:#aa9a8a}
+.dedication-form .dedication-honeypot{position:absolute;inline-size:1px;block-size:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}
+.form-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.3rem}
+.form-footer>span{font-size:.6rem;color:#998876}
+.form-footer button{border:0;background:var(--wine);color:#fff7ec;padding:.9rem 1.2rem;font:.6rem var(--sans);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,opacity .2s ease}
+.form-footer button:hover{background:var(--wine-dark)}
+.form-footer button:disabled{opacity:.65;cursor:wait}
+.form-footer button span{padding-left:.6rem}
+.form-confirmation{min-height:1.3em;color:var(--wine);font-size:.75rem;line-height:1.5;margin:.25rem 0 0}
+.dedication-board{grid-column:1/-1;position:relative;margin-top:2.8rem;padding-top:1.6rem;border-top:1px solid #b8a48f66}
+.dedication-board-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;color:var(--wine);font:italic 1.45rem var(--serif)}
+.dedication-board-heading i{font:normal 1.2rem var(--sans);color:var(--camel)}
+.wish-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:1.25rem;}
+.wish-card{position:relative;min-height:190px;padding:2rem 1.35rem 1.25rem;background:#f7efdf;border:0;box-shadow:0 12px 25px #38231c13,0 2px 5px #38231c0c;transform-origin:50% 0;animation:note-stick .68s cubic-bezier(.2,.75,.25,1) both;}
+.wish-card--offset-0{transform:rotate(-1.2deg)}.wish-card--offset-1{transform:rotate(1.1deg) translateY(8px)}.wish-card--offset-2{transform:rotate(-.45deg) translateY(3px)}
+.wish-card:only-child{grid-column:2}
+.wish-card--color-0{background:#f5e6c9}.wish-card--color-1{background:#f4e3df}.wish-card--color-2{background:#e8eadc}.wish-card--color-3{background:#f7efdf}
+.wish-note-tape{position:absolute;top:-8px;left:calc(50% - 27px);width:54px;height:17px;background:#d8bd9b99;transform:rotate(-2deg);box-shadow:0 1px 2px #49332612}
+.wish-message{position:relative;margin:0 0 1.1rem;color:#562436;font-size:1.3rem;line-height:1.15;font-family:'Caveat','Kalam',cursive;clip-path:inset(0 100% 0 0);animation:ink-write 1.8s steps(36,end) .14s forwards}
+.wish-card--font-0 .wish-message{font-family:'Caveat',cursive;font-size:1.55rem}.wish-card--font-1 .wish-message{font-family:'Kalam',cursive;font-size:1.08rem}.wish-card--font-2 .wish-message{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:1.32rem}
+.wish-author{display:block;color:#725d4e;font:500 .72rem/1.35 var(--sans);letter-spacing:.025em;overflow-wrap:anywhere}
+.wish-sample-label{display:block;margin-top:1rem;color:#96775d;font:500 .55rem var(--sans);letter-spacing:.13em;text-transform:uppercase}
+@keyframes note-stick{from{opacity:0;translate:0 17px;scale:.96}to{opacity:1;translate:0 0;scale:1}}
+@keyframes ink-write{to{clip-path:inset(0 0 0 0)}}
+@media(max-width:800px){.dedication-island{display:contents}.dedication-form{grid-column:1/-1}.wish-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.wish-card{min-height:175px;padding:1.8rem 1.15rem 1.1rem}.wish-card:only-child{grid-column:1/-1;max-width:360px;justify-self:center;width:100%}}
+@media(max-width:480px){.dedication-form label{font-size:.68rem}.dedication-form input,.dedication-form textarea{font-size:1rem}.wish-list{grid-template-columns:1fr;gap:1rem}.wish-card{min-height:unset;padding:1.9rem 1.25rem 1.2rem}.wish-card--offset-1,.wish-card--offset-2{translate:0}}
+@media(prefers-reduced-motion:reduce){.wish-card,.wish-message{animation-duration:.01ms;animation-delay:0;clip-path:none}}

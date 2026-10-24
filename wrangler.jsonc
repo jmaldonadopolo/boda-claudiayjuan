@@ -1,0 +1,17 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "boda-claudia-juan",
+	"compatibility_date": "2026-10-24",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"pages_build_output_dir": "./dist",
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "boda-claudia-juan-dedications",
+			"database_id": "3b763b1b-3c7f-4b88-b07a-81acd9e93202",
+			"migrations_dir": "./migrations"
+		}
+	]
+}

@@ -1,6 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import albumMemories from '../data/gallery.json';
+import DedicationWall from '../components/DedicationWall';
+
+export const prerender = true;
 
 const memories = [
 	{ galleryIndex: 1, alt: 'Mamá y papá comparten una celebración en familia', year: '2008', note: 'En las cosas sencillas también caben los recuerdos más grandes.' },
@@ -118,16 +121,8 @@ const memories = [
 					<h2 id="guestbook-title" data-story-step>Escríbeles<br /><em>con cariño.</em></h2>
 					<p data-story-step>Un deseo, un recuerdo o un abrazo escrito. Cada mensaje será un regalo para guardar.</p>
 				</div>
-				<form class="dedication-form" data-dedication-form data-story-step>
-					<label for="guest-name">Tu nombre</label>
-					<input id="guest-name" name="name" autocomplete="name" maxlength="48" placeholder="¿Quién les escribe?" required />
-					<label for="guest-message">Tu dedicatoria</label>
-					<textarea id="guest-message" name="message" rows="4" maxlength="240" placeholder="Escribe un deseo para ellos…" required></textarea>
-					<div class="form-footer"><span data-character-count>0 / 240</span><button type="submit">Dejar mi mensaje <span aria-hidden="true">↗</span></button></div>
-					<p class="form-confirmation" role="status" aria-live="polite" data-form-status></p>
-				</form>
+				<DedicationWall client:visible />
 			</div>
-			<div class="wish-list" data-wish-list aria-live="polite"></div>
 		</section>
 	</main>
 
@@ -518,51 +513,6 @@ const memories = [
 	setCountdown();
 	window.setInterval(setCountdown, 1000);
 
-	const form = document.querySelector<HTMLFormElement>('[data-dedication-form]');
-	const messageField = form?.querySelector<HTMLTextAreaElement>('textarea');
-	const charCount = document.querySelector<HTMLElement>('[data-character-count]');
-	const status = document.querySelector<HTMLElement>('[data-form-status]');
-	const list = document.querySelector<HTMLElement>('[data-wish-list]');
-	const storageKey = 'boda-hilaritos-dedications';
-	type Dedication = { name: string; message: string; date: string };
-	const getDedications = (): Dedication[] => {
-		try { return JSON.parse(localStorage.getItem(storageKey) ?? '[]') as Dedication[]; }
-		catch { return []; }
-	};
-	const renderDedications = () => {
-		if (!list) return;
-		list.replaceChildren();
-		getDedications().slice(-3).reverse().forEach((dedication) => {
-			const card = document.createElement('article');
-			card.className = 'wish-card';
-			const quote = document.createElement('p');
-			quote.textContent = `“${dedication.message}”`;
-			const author = document.createElement('span');
-			author.textContent = `— ${dedication.name}`;
-			card.append(quote, author);
-			list.append(card);
-		});
-	};
-	messageField?.addEventListener('input', () => {
-		if (charCount && messageField) charCount.textContent = `${messageField.value.length} / 240`;
-	});
-	form?.addEventListener('submit', (event) => {
-		event.preventDefault();
-		if (!form.reportValidity()) return;
-		const values = new FormData(form);
-		const dedication: Dedication = {
-			name: String(values.get('name') ?? '').trim(),
-			message: String(values.get('message') ?? '').trim(),
-			date: new Date().toISOString(),
-		};
-		if (!dedication.name || !dedication.message) return;
-		localStorage.setItem(storageKey, JSON.stringify([...getDedications(), dedication]));
-		form.reset();
-		if (charCount) charCount.textContent = '0 / 240';
-		if (status) status.textContent = '¡Gracias por dejar tus buenos deseos para este día!';
-		renderDedications();
-	});
-	renderDedications();
 </script>
 
 <style>
