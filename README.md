@@ -1,6 +1,6 @@
-# Claudia & Juan · Invitación de boda
+# Claudia & Juan · Una historia para recordar
 
-Landing interactiva para recordar la historia de Claudia y Juan. Incluye apertura de cortinas, cuenta regresiva, álbum fotográfico y un muro público de dedicatorias.
+Landing interactiva para recordar y compartir la historia de Claudia y Juan. Incluye apertura de cortinas, cuenta regresiva, álbum fotográfico y un muro público de dedicatorias.
 
 ## Desarrollo
 
@@ -10,7 +10,9 @@ Landing interactiva para recordar la historia de Claudia y Juan. Incluye apertur
 - `npm run db:migrate:local`: crea la tabla de dedicatorias en D1 local.
 - `npm run db:migrate:remote`: aplica las migraciones a D1 en Cloudflare.
 
-Las fotografías optimizadas y los recursos gráficos están en `public/`. El formulario de dedicatorias es una isla Preact que se hidrata al acercarse al bloque. Envía y consulta mensajes en `/api/dedications`; una Cloudflare Pages Function escribe registros con consultas preparadas en D1. El muro muestra una nota de ejemplo además de los mensajes compartidos. No usa `localStorage` ni consulta en intervalos: carga una vez al aparecer la isla.
+Las fotografías optimizadas y los recursos gráficos están en `public/`. El formulario de dedicatorias es una isla Preact que se hidrata al acercarse al bloque. Envía y consulta mensajes en `/api/dedications`; una Cloudflare Pages Function escribe registros con consultas preparadas en D1. En desarrollo, el muro presenta 15 dedicatorias de muestra locales para revisar el diseño; no se envían ni se guardan. En producción solo aparecen los mensajes de D1. Cada nota se puede abrir en un lightbox navegable. No usa `localStorage` ni consulta en intervalos: carga una vez al aparecer la isla.
+
+El muro usa una textura de corcho a todo lo ancho, con altura que crece según el número de notas. Un sobre flotante lleva a la sección de dedicatorias y se oculta mientras esa sección está visible. La página incluye `noindex, nofollow, noarchive` en metadatos y en los encabezados HTTP para evitar su indexación.
 
 Se usa Astro estático + Pages Functions porque el adaptador oficial `@astrojs/cloudflare` actual ya no admite Cloudflare Pages y recomienda Workers. Así solo el API ejecuta código en el borde y el resto continúa como archivos estáticos de Pages.
 
@@ -33,7 +35,7 @@ Se revisó la portada con Playwright en navegador a estos tamaños de ventana:
 | Tableta | 768 × 1024 | Sin desbordamiento horizontal; encabezado dentro del viewport |
 | Escritorio | 1024 × 768 y 1440 × 900 | Sin desbordamiento horizontal; encabezado dentro del viewport |
 
-En 390 × 844 también se recorrió el enlace de fecha hasta `#celebracion`: la cita de Proverbios queda visible, hay una sola cita y no aparece el lema «Te elijo…». La página conserva el orden vertical de portada, historia, recuerdos, celebración y dedicatorias.
+En 390 × 844 también se recorrió el enlace de fecha hasta `#celebracion`: la cita de Proverbios queda visible, hay una sola cita y no aparece el lema «Te elijo…». La página conserva el orden vertical de portada, historia, recuerdos, celebración y dedicatorias. El muro conserva dos columnas en móviles y pasa a una columna en pantallas muy estrechas; el fondo de corcho se extiende hasta los bordes sin desplazar las notas fuera del centro.
 
 Lenis suaviza la rueda en navegadores donde puede inicializarse; el desplazamiento táctil sigue siendo nativo. Si Lenis no está disponible, los enlaces mantienen el desplazamiento nativo del navegador. Con `prefers-reduced-motion: reduce`, la página omite Lenis y desactiva las animaciones de desplazamiento. Esta variante se comprobó en Chromium: Lenis queda desactivado y el enlace de fecha sigue llegando a `#celebracion`. La etiqueta `theme-color` usa el camel claro `#f6eee1` para coordinar la interfaz del navegador móvil con el fondo de la página. El scrollbar de escritorio usa un pulgar borgoña sobre una pista camel clara; se declaran estilos estándar para Firefox y pseudoelementos WebKit para Chromium/Safari. En móviles que ocultan automáticamente la barra, el navegador conserva ese comportamiento del sistema.
 
