@@ -14,12 +14,11 @@ Las fotografías optimizadas y los recursos gráficos están en `public/`. El fo
 
 Se usa Astro estático + Pages Functions porque el adaptador oficial `@astrojs/cloudflare` actual ya no admite Cloudflare Pages y recomienda Workers. Así solo el API ejecuta código en el borde y el resto continúa como archivos estáticos de Pages.
 
-### Conectar D1 con Cloudflare Pages
+### Cloudflare Pages y D1
 
-1. Crear la base de datos: `npx wrangler d1 create boda-claudia-juan-dedications`.
-2. Copiar el UUID devuelto en `database_id` de `wrangler.jsonc` y mantener el binding con nombre `DB`.
-3. Aplicar el esquema remoto: `npm run db:migrate:remote`.
-4. En Pages, usar `npm run build` como comando de compilación y `dist` como directorio de salida; el archivo `wrangler.jsonc` define la vinculación D1.
+La base D1 remota `boda-claudia-juan-dedications` ya está creada, el binding `DB` ya está vinculado en `wrangler.jsonc` y la migración inicial ya está aplicada. Pages compila con `npm run build`, usa `dist` como salida y lee el binding desde el archivo Wrangler.
+
+Para enlazar otra cuenta, crear la base con `npx wrangler d1 create boda-claudia-juan-dedications`, sustituir el UUID de `database_id` y aplicar el esquema con `npm run db:migrate:remote`.
 
 Para desarrollo de la interfaz, ejecutar `npm run dev`. Para probar las Pages Functions y D1 localmente, ejecutar `npm run db:migrate:local`, `npm run build` y `npx wrangler pages dev dist`. El plan gratuito de Cloudflare incluye límites diarios de Workers/Functions y D1; el diseño evita consultas periódicas y limita la carga a las 24 notas más recientes.
 
