@@ -1,19 +1,30 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
 import albumMemories from '../data/gallery.json';
 import DedicationWall from '../components/DedicationWall';
+import heroPortrait from '../assets/gallery-originals/album-003.jpg';
+import altarPortrait from '../assets/gallery-originals/album-001.jpg';
+import memoryPhoto002 from '../assets/gallery-originals/album-002.jpg';
+import memoryPhoto005 from '../assets/gallery-originals/album-005.jpg';
+import memoryPhoto007 from '../assets/gallery-originals/album-007.jpg';
+import memoryPhoto008 from '../assets/gallery-originals/album-008.jpg';
+import memoryPhoto012 from '../assets/gallery-originals/album-012.jpg';
+import memoryPhoto016 from '../assets/gallery-originals/album-016.jpg';
+import memoryPhoto020 from '../assets/gallery-originals/album-020.jpg';
+import memoryPhoto027 from '../assets/gallery-originals/album-027.jpg';
 
 export const prerender = true;
 
 const memories = [
-	{ galleryIndex: 1, alt: 'Mamá y papá comparten una celebración en familia', year: '2008', note: 'En las cosas sencillas también caben los recuerdos más grandes.' },
-	{ galleryIndex: 4, alt: 'Mamá y papá posan abrazados en la escalera', year: '2009', note: 'Una historia hecha de compañía, paciencia y muchas sonrisas.' },
-	{ galleryIndex: 6, alt: 'Mamá y papá celebran una Navidad en familia', year: '2010', note: 'Cada celebración se vuelve un motivo para estar juntos.' },
-	{ galleryIndex: 7, alt: 'Mamá y papá se abrazan durante una celebración', year: '2010', note: 'Al lado del otro, las risas siempre encuentran su lugar.' },
-	{ galleryIndex: 11, alt: 'Mamá y papá comparten un momento en el jardín', year: '2016', note: 'Con los años, la ternura sigue encontrando nuevos gestos.' },
-	{ galleryIndex: 15, alt: 'Mamá y papá de paseo juntos', year: '2016', note: 'También quedan los caminos que recorrieron juntos.' },
-	{ galleryIndex: 19, alt: 'Mamá y papá comparten una comida', year: '2017', note: 'En cada etapa, el amor ha sido su mejor compañía.' },
-	{ galleryIndex: 26, alt: 'Mamá y papá brindan durante una comida', year: '2019', note: 'Y las sobremesas, otra forma de decir: aquí estoy.' },
+	{ galleryIndex: 1, photo: memoryPhoto002, alt: 'Mamá y papá comparten una celebración en familia', year: '2008', note: 'En las cosas sencillas también caben los recuerdos más grandes.' },
+	{ galleryIndex: 4, photo: memoryPhoto005, alt: 'Mamá y papá posan abrazados en la escalera', year: '2009', note: 'Una historia hecha de compañía, paciencia y muchas sonrisas.' },
+	{ galleryIndex: 6, photo: memoryPhoto007, alt: 'Mamá y papá celebran una Navidad en familia', year: '2010', note: 'Cada celebración se vuelve un motivo para estar juntos.' },
+	{ galleryIndex: 7, photo: memoryPhoto008, alt: 'Mamá y papá se abrazan durante una celebración', year: '2010', note: 'Al lado del otro, las risas siempre encuentran su lugar.' },
+	{ galleryIndex: 11, photo: memoryPhoto012, alt: 'Mamá y papá comparten un momento en el jardín', year: '2016', note: 'Con los años, la ternura sigue encontrando nuevos gestos.' },
+	{ galleryIndex: 15, photo: memoryPhoto016, alt: 'Mamá y papá de paseo juntos', year: '2016', note: 'También quedan los caminos que recorrieron juntos.' },
+	{ galleryIndex: 19, photo: memoryPhoto020, alt: 'Mamá y papá comparten una comida', year: '2017', note: 'En cada etapa, el amor ha sido su mejor compañía.' },
+	{ galleryIndex: 26, photo: memoryPhoto027, alt: 'Mamá y papá brindan durante una comida', year: '2019', note: 'Y las sobremesas, otra forma de decir: aquí estoy.' },
 ];
 ---
 
@@ -46,7 +57,7 @@ const memories = [
 				<a class="text-link" href="#historia">Desliza para ver su historia <span aria-hidden="true">↓</span></a>
 			</div>
 			<div class="hero-portrait" aria-label="Retrato de los novios">
-				<img src={albumMemories[2].thumb} width={albumMemories[2].thumbWidth} height={albumMemories[2].thumbHeight} alt="Mamá y papá juntos, sonriendo en el jardín" fetchpriority="high" decoding="async" />
+				<Image src={heroPortrait} widths={[360, 540, 720, 900]} sizes="(max-width: 800px) 83vw, 42vw" format="webp" alt="Mamá y papá juntos, sonriendo en el jardín" priority />
 				<div class="hero-photo-floral" aria-hidden="true"><img src="/images/curtain-florals.df41fe4ec3.webp" width="1312" height="1199" alt="" decoding="async" /></div>
 				<div class="hero-photo-label"><span>Juntos, siempre</span><span>01 / 05</span></div>
 			</div>
@@ -78,7 +89,7 @@ const memories = [
 			<div class="polaroid-field">
 				{memories.map((memory, index) => (
 					<figure class={`polaroid polaroid-${index + 1}`} data-card data-gallery-index={memory.galleryIndex} data-gallery-year={memory.year} tabindex="0" role="button" aria-label={`Abrir recuerdo ${index + 1}: ${memory.note}`}>
-						<div class="photo-wrap"><img src={albumMemories[memory.galleryIndex].thumb} width={albumMemories[memory.galleryIndex].thumbWidth} height={albumMemories[memory.galleryIndex].thumbHeight} alt={memory.alt} loading="lazy" decoding="async" /></div>
+						<div class="photo-wrap"><Image src={memory.photo} widths={[320, 480, 640]} sizes="(max-width: 800px) 48vw, 25vw" format="webp" alt={memory.alt} loading="lazy" decoding="async" /></div>
 						<figcaption>
 							<span class="photo-year">{memory.year}</span>
 							<span class="photo-note">{memory.note}</span>
@@ -103,7 +114,7 @@ const memories = [
 			</div>
 			<div class="celebration-art">
 				<figure class="celebration-photo" data-story-photo>
-					<img src={albumMemories[0].image} width={albumMemories[0].width} height={albumMemories[0].height} alt="Claudia y Juan de la mano, vestidos elegantemente" loading="lazy" decoding="async" />
+					<Image src={altarPortrait} widths={[360, 480, 640]} sizes="(max-width: 800px) 65vw, 30vw" format="webp" alt="Claudia y Juan de la mano, vestidos elegantemente" loading="lazy" decoding="async" />
 					<div class="celebration-photo-floral" aria-hidden="true"><img src="/images/curtain-florals.df41fe4ec3.webp" width="1312" height="1199" alt="" loading="lazy" decoding="async" /></div>
 					<figcaption>Un amor que nos inspira</figcaption>
 				</figure>
@@ -151,13 +162,13 @@ const memories = [
 	<script type="application/json" data-gallery-data set:html={JSON.stringify(albumMemories)}></script>
 	<dialog class="gallery-dialog" id="wedding-gallery" data-gallery-dialog aria-label="Galería de recuerdos de Claudia y Juan">
 		<div class="gallery-frame">
-			<button class="gallery-close" type="button" data-gallery-close aria-label="Cerrar galería">×</button>
-			<button class="gallery-arrow gallery-prev" type="button" data-gallery-prev aria-label="Foto anterior">‹</button>
+			<button class="gallery-close" type="button" data-gallery-close aria-label="Cerrar galería"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17" /></svg></button>
+			<button class="gallery-arrow gallery-prev" type="button" data-gallery-prev aria-label="Foto anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7" /></svg></button>
 			<figure class="gallery-photo" data-gallery-photo>
 				<img data-gallery-image alt="" decoding="async" />
 				<figcaption><span class="gallery-count" data-gallery-count></span><p data-gallery-caption></p></figcaption>
 			</figure>
-			<button class="gallery-arrow gallery-next" type="button" data-gallery-next aria-label="Foto siguiente">›</button>
+			<button class="gallery-arrow gallery-next" type="button" data-gallery-next aria-label="Foto siguiente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 5 7 7-7 7" /></svg></button>
 			<p class="gallery-hint">Usa las flechas o desliza para recorrer sus recuerdos</p>
 		</div>
 	</dialog>
@@ -610,8 +621,8 @@ const memories = [
 	.photo-wrap{position:relative}.photo-wrap:after{content:'VER RECUERDO  ↗';position:absolute;inset:auto 0 0;padding:.7rem .55rem;background:linear-gradient(transparent,#3f0f20bb);color:#fff1da;font:500 .52rem var(--sans);letter-spacing:.15em;text-align:right;opacity:0;transform:translateY(5px);transition:opacity .35s ease,transform .35s ease}.polaroid:hover .photo-wrap:after,.polaroid:focus-visible .photo-wrap:after{opacity:1;transform:translateY(0)}
 	.gallery-dialog{--gallery-backdrop:0;width:min(920px,calc(100vw - 2rem));max-width:none;max-height:calc(100dvh - 2rem);padding:0;border:1px solid #d7b17d88;border-radius:3px;background:#f7efe3;color:var(--ink);overflow:visible;box-shadow:0 36px 110px #1c0614a8}
 	.gallery-dialog::backdrop{background:rgba(37,7,21,var(--gallery-backdrop));backdrop-filter:blur(calc(var(--gallery-backdrop)*10px))}.gallery-frame{position:relative;padding:clamp(1.2rem,4vw,2.7rem);display:grid;grid-template-columns:3.2rem minmax(0,1fr) 3.2rem;align-items:center;gap:clamp(.3rem,2vw,1.4rem)}
-	.gallery-close,.gallery-arrow{border:1px solid #bd946b;background:#f8f0e4;color:var(--wine);cursor:pointer;display:grid;place-items:center;padding:0;line-height:1;transition:background .25s,color .25s,transform .25s}.gallery-close:hover,.gallery-arrow:hover{background:var(--wine);color:#fff3e0;transform:scale(1.06)}.gallery-close:focus-visible,.gallery-arrow:focus-visible{outline:2px solid var(--camel);outline-offset:3px}
-	.gallery-close{position:absolute;right:1rem;top:1rem;z-index:2;width:2.5rem;height:2.5rem;border-radius:50%;font:300 1.8rem/1 var(--sans)}.gallery-arrow{width:3rem;height:3rem;border-radius:50%;font:300 2rem/1 var(--serif)}
+	.gallery-close,.gallery-arrow{box-sizing:border-box;border:1px solid #bd946b;background:#f8f0e4;color:var(--wine);cursor:pointer;display:grid;place-items:center;padding:0;line-height:0;transition:background .2s,color .2s,transform .2s,box-shadow .2s}.gallery-close:hover,.gallery-arrow:hover{background:var(--wine);color:#fff3e0;transform:scale(1.025);box-shadow:0 3px 10px #32101d26}.gallery-close:focus-visible,.gallery-arrow:focus-visible{outline:2px solid var(--wine);outline-offset:3px}
+	.gallery-close{position:absolute;right:1rem;top:1rem;z-index:2;width:3rem;height:3rem;border-radius:50%}.gallery-arrow{width:3rem;height:3rem;border-radius:50%}.gallery-close svg,.gallery-arrow svg{display:block;width:1.25rem;height:1.25rem;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 	.gallery-photo{grid-column:2;justify-self:center;margin:0 auto;width:fit-content;max-width:100%;min-width:0;padding:clamp(.55rem,2vw,1rem) clamp(.55rem,2vw,1rem) 1rem;background:#fffdf8;box-shadow:0 18px 54px #492a1c24;transform-style:preserve-3d}.gallery-photo img{display:block;margin:0 auto;width:auto;height:auto;max-width:100%;max-height:min(66dvh,660px);object-fit:contain;background:transparent;transform-style:preserve-3d}.gallery-photo img[data-loading="true"]{opacity:.35}.gallery-photo figcaption{padding:1rem .65rem .15rem;text-align:center}.gallery-count{font:600 .57rem var(--sans);letter-spacing:.18em;color:#a47750;text-transform:uppercase}.gallery-photo figcaption p{font:italic clamp(1.15rem,2vw,1.65rem)/1.15 var(--serif);color:var(--wine);margin:.55rem auto 0;max-width:600px}.gallery-hint{grid-column:1/-1;text-align:center;font:500 .56rem var(--sans);letter-spacing:.12em;color:#8a7462;text-transform:uppercase;margin:.4rem 0 0}
 	:global(body.gallery-open){overflow:hidden}
 	.curtain-monogram .couple-ampersand,.monogram .couple-ampersand,.footer-mark .couple-ampersand{font-family:'Bodoni Moda',Georgia,serif;font-size:.68em;font-weight:500;font-style:normal;letter-spacing:0;color:#dfc29e;text-shadow:none;opacity:.9;display:inline-block;padding:0 .12em;vertical-align:.04em}
@@ -621,7 +632,7 @@ const memories = [
 	.curtain-center button:focus-visible{outline:2px solid #e5c79d;outline-offset:2px;box-shadow:0 5px 18px #2a081a42}
 	.curtain-center button:active{background:#c99a6b;color:#3b0b1e;transform:translateY(1px) scale(.99);box-shadow:inset 0 2px 5px #3b0b1e44}
 	@keyframes invitation-prompt{0%,76%,100%{transform:translateY(0)}82%{transform:translateY(-2px)}88%{transform:translateY(1px)}94%{transform:translateY(0)}}
-	@media(max-width:600px){.gallery-frame{grid-template-columns:2.25rem minmax(0,1fr) 2.25rem;padding:3.6rem .8rem 1rem;gap:.3rem}.gallery-arrow{width:2.1rem;height:2.1rem;font-size:1.5rem}.gallery-photo{padding:.45rem .45rem .75rem}.gallery-photo img{max-height:56dvh}.gallery-photo figcaption{padding:.7rem .2rem 0}.gallery-hint{font-size:.47rem;letter-spacing:.07em}.balloon-five,.balloon-eight{display:none}}
+	@media(max-width:600px){.gallery-frame{grid-template-columns:2.75rem minmax(0,1fr) 2.75rem;padding:3.6rem .8rem 1rem;gap:.3rem}.gallery-arrow{width:2.75rem;height:2.75rem}.gallery-close{width:2.75rem;height:2.75rem}.gallery-photo{padding:.45rem .45rem .75rem}.gallery-photo img{max-height:56dvh}.gallery-photo figcaption{padding:.7rem .2rem 0}.gallery-hint{font-size:.68rem;letter-spacing:.05em}.balloon-five,.balloon-eight{display:none}}
 	@media(prefers-reduced-motion:reduce){.balloon{animation:none}.polaroid,.gallery-arrow,.gallery-close{transition:none}.curtain-center button{animation:none}}
 	/* Los globos terminan en un nudo unido a una cuerda curva, no en una punta de flecha. */
 	.balloon{--balloon-skin:#d1a576;background:radial-gradient(ellipse at 34% 24%,#fff5e24d 0 10%,transparent 42%),var(--balloon-skin);box-shadow:inset -7px -6px 0 #4d17261c,0 8px 22px #30081724}
@@ -694,4 +705,16 @@ const memories = [
 	.topbar .monogram{font-size:clamp(1.6rem,1.8vw,1.9rem);font-weight:600;letter-spacing:.025em}
 	.topbar .monogram .couple-ampersand{font-size:.74em;font-weight:600;opacity:.96}
 	@media(max-width:800px){.topbar .monogram{font-size:clamp(1.35rem,5vw,1.55rem);font-weight:600}.topbar .monogram .couple-ampersand{font-size:.72em}}
+	/* Copys y mensajes secundarios con tamaño y contraste cómodos para lectura. */
+	.hero-description,.intro-main>p:last-child,.celebration-text>p:not(.eyebrow),.footer-location{font-size:clamp(1.0625rem,1.15vw,1.18rem);line-height:1.72;color:#4b3a30}
+	.scripture-quote p{font-size:clamp(1.12rem,1.35vw,1.28rem);line-height:1.55}
+	.footer>p{max-width:760px;margin:1rem auto 2.5rem;color:#46362d;font-size:clamp(1.25rem,1.55vw,1.48rem);line-height:1.55}
+	.footer-location{color:#4b3a30}
+	.footer-bottom{font-size:.72rem;color:#5b4b40}
+	.photo-note{font-size:1.05rem;line-height:1.3;color:#514136}
+	.text-link,.album-link,.calendar-link{font-size:.8rem}
+	.gallery-count{font-size:.72rem}
+	.gallery-hint{font-size:.72rem;letter-spacing:.08em;color:#5d4a3d}
+	@media(max-width:800px){.hero-description,.intro-main>p:last-child,.celebration-text>p:not(.eyebrow),.footer-location{font-size:1.08rem}.footer-bottom{font-size:.7rem}}
+	@media(max-width:480px){.footer>p{font-size:1.2rem;line-height:1.55;margin:1rem auto 2rem}.footer-bottom{font-size:.68rem}.photo-note{font-size:1rem;line-height:1.28}.text-link,.album-link,.calendar-link{font-size:.78rem}.gallery-hint{font-size:.68rem;line-height:1.4}}
 	</style>
