@@ -435,7 +435,7 @@ const memories = [
 		});
 
 		gsap.utils.toArray<HTMLElement>('[data-card]').forEach((card, index) => {
-			const tilt = [-8, 5, 8, 6, -7, 4, -6, 6][index] ?? 0;
+			const tilt = [-4, 4.5, -3.5, 4, -4.5, 3.5, -3.5, 4.5, -4, -5.5, 5, -5][index] ?? 0;
 			const liftCard = () => gsap.to(card, { y: -12, rotate: tilt + (index % 2 ? -2 : 2), scale: 1.035, duration: 0.32, ease: 'power2.out', overwrite: true });
 			const settleCard = () => gsap.to(card, { y: 0, rotate: tilt, scale: 1, duration: 0.42, ease: 'power2.out', overwrite: true });
 			card.addEventListener('pointerenter', liftCard);
@@ -725,22 +725,12 @@ const memories = [
 	@media(max-width:800px){.hero-description,.intro-main>p:last-child,.celebration-text>p:not(.eyebrow),.footer-location{font-size:1.08rem}.footer-bottom{font-size:.7rem}}
 	@media(max-width:480px){.footer>p{font-size:1.2rem;line-height:1.55;margin:1rem auto 2rem}.footer-bottom{font-size:.68rem}.photo-note{font-size:1rem;line-height:1.28}.text-link,.album-link,.calendar-link{font-size:.78rem}.gallery-hint{font-size:.68rem;line-height:1.4}}
 	/* Las dos fotos de boda civil conservan el encuadre vertical completo. */
-	.polaroid-field{height:2300px}
+	.polaroid-field{height:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:2.25rem clamp(.8rem,1.8vw,1.5rem)}
+	.polaroid{position:relative;inset:auto;justify-self:center;width:min(100%,315px)}
 	.polaroid-civil .photo-wrap{height:auto;aspect-ratio:1055/1491}
 	.polaroid-civil .photo-wrap img{object-fit:cover}
 	.polaroid-tall .photo-wrap{height:auto;aspect-ratio:var(--photo-ratio,1055/1491)}
-	.polaroid-1{left:2%;right:auto;top:1%;transform:rotate(-3deg);z-index:3}
-	.polaroid-2{left:35%;right:auto;top:2%;transform:rotate(2.5deg);z-index:2}
-	.polaroid-3{left:auto;right:2%;top:1%;transform:rotate(3deg);z-index:1}
-	.polaroid-4{left:2%;right:auto;top:27%;transform:rotate(-3deg);z-index:1}
-	.polaroid-5{left:35%;right:auto;top:26%;transform:rotate(2.5deg);z-index:2}
-	.polaroid-6{left:auto;right:2%;top:27%;transform:rotate(3deg);z-index:1}
-	.polaroid-7{left:2%;right:auto;top:52%;transform:rotate(3deg);z-index:2}
-	.polaroid-8{left:35%;right:auto;top:51%;transform:rotate(-3deg);z-index:1}
-	.polaroid-9{left:auto;right:2%;top:52%;transform:rotate(2.5deg);z-index:2}
-	.polaroid-10{left:2%;right:auto;top:77%;transform:rotate(-5deg);z-index:1}
-	.polaroid-11{left:35%;right:auto;top:76%;transform:rotate(5deg);z-index:2}
-	.polaroid-12{left:auto;right:2%;top:77%;transform:rotate(-4.5deg);z-index:1}
-	@media(max-width:800px){.polaroid-field{height:5300px}.polaroid{width:clamp(150px,45vw,280px)}.polaroid-1{left:2%;right:auto;top:0%;transform:rotate(-3deg)}.polaroid-2{left:auto;right:2%;top:8%;transform:rotate(3deg)}.polaroid-3{left:2%;right:auto;top:16%;transform:rotate(-3deg)}.polaroid-4{left:auto;right:2%;top:24%;transform:rotate(3deg)}.polaroid-5{left:2%;right:auto;top:32%;transform:rotate(-3deg)}.polaroid-6{left:auto;right:2%;top:40%;transform:rotate(3deg)}.polaroid-7{left:2%;right:auto;top:48%;transform:rotate(-3deg)}.polaroid-8{left:auto;right:2%;top:56%;transform:rotate(3deg)}.polaroid-9{left:2%;right:auto;top:64%;transform:rotate(-3deg)}.polaroid-10{left:auto;right:2%;top:72%;transform:rotate(3deg)}.polaroid-11{left:2%;right:auto;top:80%;transform:rotate(-4.5deg)}.polaroid-12{left:auto;right:2%;top:88%;transform:rotate(4.5deg)}}
+	@media(max-width:800px){.polaroid-field{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.8rem .9rem}.polaroid{width:min(100%,280px);padding:9px 9px 45px}}
+	@media(max-width:380px){.polaroid-field{grid-template-columns:minmax(0,1fr);row-gap:1.5rem}.polaroid{width:min(100%,280px)}.polaroid:nth-child(odd){justify-self:start}.polaroid:nth-child(even){justify-self:end}}
 	.celebration-text>p:not(.eyebrow){color:#fff3e3}
 	</style>
