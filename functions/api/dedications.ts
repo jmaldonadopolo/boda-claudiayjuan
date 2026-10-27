@@ -31,7 +31,7 @@ const json = (payload: unknown, status = 200) =>
 export async function onRequestGet({ env }: PagesFunctionContext) {
 	try {
 		const { results } = await env.DB.prepare(
-			'SELECT id, name, message, color_index, font_index, created_at FROM dedications ORDER BY created_at DESC LIMIT 24',
+			'SELECT id, name, message, color_index, font_index, created_at FROM dedications ORDER BY created_at DESC',
 		).all<DedicationRow>();
 		return json({ dedications: results.map((row) => ({
 			id: row.id,
